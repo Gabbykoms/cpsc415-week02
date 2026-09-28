@@ -33,12 +33,12 @@ This reads the `thinking_effort` field directly from the model's response messag
 
 ## Model comparison
 
-| Model | Answer style | Observed cost |
-|---|---|---|
-| `openai/gpt-4o-mini` | Prose paragraphs, conversational | < $0.01 |
-| `google/gemini-3.1-flash-lite` | Structured bullet points, more concise | < $0.01 |
+| Model | Answer style | Output tokens | Observed cost |
+|---|---|---|---|
+| `openai/gpt-4o-mini` | Prose paragraphs, conversational | 411 | $0.000249 |
+| `google/gemini-3.1-flash-lite` | Structured bullet points, more concise | 839 | $0.00126 |
 
-Both models answered the question "How good is an AI model for learning?" correctly, but Gemini leaned toward lists while GPT-4o-mini wrote in full sentences. Both costs showed as $0.00 on the OpenRouter dashboard — too small to register at two decimal places.
+Both models answered the question "How good is an AI model for learning?" correctly, but Gemini leaned toward lists while GPT-4o-mini wrote in full sentences. Gemini used roughly twice as many output tokens and cost about 5x more for this question.
 
 ## Note on local models
 
