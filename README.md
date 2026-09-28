@@ -1,45 +1,45 @@
-# Artifact-chain template
+# Chat Client
 
-Starting point for major project submissions in CPSC 415 (AI Integration, Trinity College). Click **Use this template** on GitHub to create your own repository from it. Do not fork.
+A command-line Python chat client that sends questions to an AI model via OpenRouter and prints the answer, model name, token counts, and thinking effort label.
 
-The course follows Anthropic's [AI-Native SDLC Playbook](https://claude.com/blog/the-ai-native-sdlc-playbook): every stage of the work leaves a short, version-controlled artifact. The agent writes most of the code. You decide what gets built, steer, verify, and explain every choice. These files are how you prove you understood what the agent built.
+## How to run
 
-## Early labs
+Set your environment variables, then run:
 
-Week 1 uses the minimal repository described in the course handout. Later introductory labs complete only the stages assigned so far. This template describes the full chain for team projects and the final portfolio; it does not require unintroduced artifacts in Week 1. Project languages are chosen and justified, with one separate guided exercise in an unfamiliar language.
-
-## The chain
-
-| Stage | File | Written by | Approved by |
-|---|---|---|---|
-| Plan | `intent/<name>.md` | The agent, after interviewing you | You |
-| Design | `spec.md` | The agent, from the approved intent | You, against the intent |
-| Build | `plan.md`, then code on a branch | The agent | You, before any code |
-| Test | tests, lint, CI | The agent | You confirm the loop actually ran |
-| Deploy | a pull request reviewed against `REVIEW.md` | A separate reviewing agent | You merge |
-| Maintain | a new `intent/<name>.md` | Triggered by a bug, a ticket, or a model change | You triage |
-
-`CLAUDE.md` and `REVIEW.md` travel with the repo and are graded artifacts.
-
-## Rules that are graded
-
-- Intent and spec exist before code. Plan is approved before implementation. The commit history shows it.
-- One pull request per feature, from a branch, reviewed before merge. Do not commit to `main` directly after the first commit.
-- `spec.md` states the **language** and the **model** for each component and why.
-- `ANNOTATION.md` answers the four questions for the finished project.
-- No secrets in the repo. `.claude/settings.local.json` and `.env` are ignored; the `.example` file shows the shape.
-
-## Submitting
-
-Tag the commit you are submitting and put the repository URL plus the tag on Moodle:
-
-```
-git tag tp1-submitted
-git push origin tp1-submitted
+```bash
+export OPENROUTER_API_KEY=your-key-here
+export CHAT_BASE_URL=https://openrouter.ai/api/v1   # optional
+export CHAT_MODEL=openai/gpt-4o-mini                # optional
+python3 chat.py
 ```
 
-Tags the course uses: `intent-spec`, `tp1-submitted`, `tp2-submitted`, `portfolio-final`.
+If `CHAT_BASE_URL` or `CHAT_MODEL` are not set, the program prints a notice and falls back to hardcoded defaults. `OPENROUTER_API_KEY` is required — requests will fail without it.
 
-## Running the agent
+Type `quit` or press Ctrl+C to exit.
 
-Copy `.claude/settings.local.json.example` to `.claude/settings.local.json` and fill in your OpenRouter key and model slugs, or use the `orclaude` launcher from the [course repository](https://github.com/kousen/ai-integration-course/tree/main/scripts).
+## Two corrections made to the intent draft
+
+1. **Interaction style:** The draft described a single question-and-answer interaction. I changed it to a continuous conversation loop that keeps prompting until the user types `quit` or hits Ctrl+C.
+
+2. **Thinking effort:** The draft did not include thinking effort at all. I added it because I'm used to setting thinking effort when running models locally in VS Code. The program asks the model to return a thinking effort label; if the model or API doesn't provide one, it honestly reports "No thinking effort label available" rather than guessing.
+
+## One line explained
+
+```python
+thinking_effort = data["choices"][0]["message"].get("thinking_effort")
+```
+
+This reads the `thinking_effort` field directly from the model's response message. If the field is absent (most models don't return it), `.get()` returns `None` and the program falls back to the honest message.
+
+## Model comparison
+
+| Model | Answer style | Observed cost |
+|---|---|---|
+| `openai/gpt-4o-mini` | Prose paragraphs, conversational | < $0.01 |
+| `google/gemini-3.1-flash-lite` | Structured bullet points, more concise | < $0.01 |
+
+Both models answered the question "How good is an AI model for learning?" correctly, but Gemini leaned toward lists while GPT-4o-mini wrote in full sentences. Both costs showed as $0.00 on the OpenRouter dashboard — too small to register at two decimal places.
+
+## Note on local models
+
+A local model was not tested in this lab.
